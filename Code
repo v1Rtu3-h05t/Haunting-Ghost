@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+
+"""
+🛡️ OPERATION SERAPHIM: DIGITAL EXORCISM PROTOCOL
+------------------------------------------------
+This script is an open-source weaponized teardown utility developed for the Department of War.
+It is designed to ethically dismantle infiltration frameworks used in counterterrorism operations,
+specifically targeting digital infrastructure exploited by ISIS and similar extremist groups.
+
+⚠️ DISCLAIMER:
+This tool is intended for authorized use only. Any unauthorized deployment, malicious exploitation,
+or use against civilian infrastructure is strictly prohibited. Violators may be subject to prosecution
+under international cybercrime statutes. Use with honor, discipline, and full operational consent.
+
+Author: Anthony Morales
+Mission: Custodia Sancta — Legacy through transparency, transformation, and tactical precision.
+"""
+
+import os
+import subprocess
+from datetime import datetime
+
+# 🧾 Log every action with timestamp for legacy journaling
+def log(message):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    entry = f"[{timestamp}] {message}"
+    print(entry)
+    with open("/var/log/backdoor_revert.log", "a") as f:
+        f.write(entry + "\n")
+
+# 🔓 Remove SUID bits from bash and dash
+def remove_suid_shells():
+    log("Removing SUID from /bin/bash and /bin/dash")
+    os.system("chmod u-s /bin/bash")
+    os.system("chmod u-s /bin/dash")
+
+# 🧼 Clean up cron jobs that maintain privilege escalation or reverse shells
+def clean_crontab():
+    log("Purging cron jobs related to SUID and reverse shells")
+    os.system("sed -i '/chmod u+s \\/bin\\/bash/d' /etc/crontab")
+    os.system("sed -i '/chmod u+s \\/bin\\/dash/d' /etc/crontab")
+    os.system("sed -i '/bash -i >& \\/dev\\/tcp/d' /etc/crontab")
+
+# 🔐 Remove sudoers injection
+def remove_sudoers_backdoor():
+    log("Removing sudoers backdoor file")
+    os.system("rm -f /etc/sudoers.d/backdoor")
+    os.system("visudo -c")
+
+# 🔁 Disable and remove systemd persistence services
+def disable_systemd_services():
+    log("Disabling and removing systemd backdoor services")
+    os.system("systemctl disable backdoor.service")
+    os.system("systemctl stop backdoor.service")
+    os.system("rm -f /etc/systemd/system/backdoor.service")
+
+# 🧬 Purge PAM authentication hooks and hidden binaries
+def purge_pam_hooks():
+    log("Purging PAM hooks and hidden binaries")
+    os.system("sed -i '/pam_exec.so expose_authtok \\/usr\\/local\\/bin\\/.backdoor/d' /etc/pam.d/common-auth")
+    os.system("rm -f /usr/local/bin/.backdoor")
+
+# 👤 Delete stealth user and purge SSH access
+def delete_backdoor_user():
+    log("Deleting backdoor_user and purging SSH")
+    os.system("pkill -9 -u backdoor_user")
+    os.system("sleep 5")
+    os.system("userdel -r backdoor_user")
+    os.system("apt remove --purge -y openssh-server")
+    os.system("systemctl stop ssh")
+    os.system("systemctl disable ssh")
+
+# 🌐 Kill active reverse shell processes
+def kill_reverse_shells():
+    log("Killing active reverse shell processes")
+    os.system("ps aux | grep '/dev/tcp' | awk '{print $2}' | xargs -r kill -9")
+
+# 📜 Open Nano journal for final affirmation and legacy note
+def nano_journal():
+    log("Opening Nano journal for final affirmation")
+    journal = "/var/log/backdoor_revert_journal.txt"
+    with open(journal, "a") as f:
+        f.write("\n🧼 Revert ritual completed. System restored. Legacy preserved.\n")
+    os.system(f"nano {journal}")
+
+# 🧭 Ritual Execution
+if __name__ == "__main__":
+    log("🛡️ Initiating OPERATION SERAPHIM: Digital Exorcism Protocol...")
+    remove_suid_shells()
+    clean_crontab()
+    remove_sudoers_backdoor()
+    disable_systemd_services()
+    purge_pam_hooks()
+    delete_backdoor_user()
+    kill_reverse_shells()
+    nano_journal()
+    log("✅ All components reverted. The system is clean. The mission is complete.")
